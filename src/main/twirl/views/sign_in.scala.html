@@ -1,0 +1,27 @@
+<form id="myForm" method="post" action="/user/sign-in/" class="bs-example form-horizontal">
+    <fieldset>
+        <legend>Sign In Form</legend>
+        <div class="form-group">
+            <label for="userNameInput" class="col-lg-3 control-label">User Name</label>
+
+            <div class="col-lg-9">
+                <input type="text" class="form-control" name="login"
+                id="userNameInput" placeholder="User Name"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="passwordInput" class="col-lg-3 control-label">Password</label>
+
+            <div class="col-lg-9">
+                <input type="password" class="form-control"
+                name="password" id="passwordInput" placeholder="Password"/>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-lg-offset-3">
+            <button class="btn btn-default">Cancel</button>
+            <button class="btn btn-primary">Login</button>
+        </div>
+    </fieldset>
+</form>

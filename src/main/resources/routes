@@ -3,7 +3,14 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                            controllers.Application.index
+GET     /play/                       controllers.Application.game
+
+GET     /user/sign-in/               controllers.User.signIn
+POST    /user/sign-in/               controllers.User.signIn
+
+GET     /user/sign-up/               controllers.User.signUp
+POST    /user/sign-up/               controllers.User.signUp
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
