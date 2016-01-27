@@ -5,6 +5,7 @@
 # Home page
 GET     /                            controllers.Application.index
 GET     /play/                       controllers.Application.game
+GET     /game/                       controllers.Game.create
 
 GET     /user/sign-in/               controllers.User.signIn
 POST    /user/sign-in/               controllers.User.signIn

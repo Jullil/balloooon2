@@ -1,6 +1,5 @@
 package controllers
 
-import controllers.Application._
 import play.twirl.api.Html
 
 /**

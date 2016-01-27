@@ -11,7 +11,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val root = (project in file(".")).dependsOn(restService)
+lazy val root = (project in file(".")).aggregate(restService).dependsOn(restService)
   .settings(commonSettings: _*)
   .settings(Seq(
     name := "balloooon-web-client",
@@ -20,13 +20,24 @@ lazy val root = (project in file(".")).dependsOn(restService)
       cache,
       ws,
       specs2 % Test,
+      "com.typesafe.akka" %% "akka-cluster" % "2.4.0",
+      "com.typesafe.akka" %% "akka-contrib" % "2.4.0",
+      "com.typesafe.akka" %% "akka-slf4j" % "2.4.0",
+      "com.typesafe.akka" %% "akka-testkit" % "2.4.0" % Test,
       "org.postgresql" % "postgresql" % "9.4-1206-jdbc42",
-      "org.webjars" % "bootstrap" % "3.0.0"
+      "org.webjars" % "bootstrap" % "3.0.0",
+      "org.webjars" % "sockjs-client" % "1.0.2"
     ),
-    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
+    PlayKeys.playMonitoredFiles ++= (sourceDirectories in(Compile, TwirlKeys.compileTemplates)).value
   ))
-.enablePlugins(PlayScala)
-.disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala)
+  .disablePlugins(PlayLayoutPlugin)
+
+lazy val restService = (project in file("rest-service"))
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    name := "balloooon-rest-service"
+  ))
 
 //lazy val root = project.in(file(".")).aggregates(core, util)
 
@@ -47,14 +58,6 @@ lazy val webClient = (project in file("web-client"))
   .enablePlugins(PlayScala)
   .disablePlugins(PlayLayoutPlugin)
 */
-
-
-lazy val restService = (project in file("rest-service"))
-  .settings(commonSettings: _*)
-  .settings(Seq(
-    name := "balloooon-rest-service"
-  ))
-
 
 
 // Play provides two styles of routers, one expects its actions to be injected, the
