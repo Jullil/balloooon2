@@ -13,12 +13,8 @@ object GameActor {
   def props(uid: Long)(out: ActorRef) = Props(new GameActor(uid, out))
 }
 
-case class LocationMessage(uid: Long, x: Int, y: Int) {
+case class LocationMessage(uid: Long, x: Long, y: Long) {
   val messageType = "location"
-
-  def unapply() = {
-
-  }
 }
 
 object LocationMessage {
@@ -30,40 +26,76 @@ object LocationMessage {
       "y" -> message.y
     )
   }
+}
 
-  implicit val locationMessageReads: Reads[LocationMessage] = (
-    (JsPath \ "uid").read[Long] and
-      (JsPath \ "x").read[Int] and
+case class DirectionMessage(dX: Int, dY: Int) {
+  val messageType = "direction"
+}
+object DirectionMessage {
+  implicit val directionMessageReads: Reads[DirectionMessage] = (
+    (JsPath \ "x").read[Int] and
       (JsPath \ "y").read[Int]
-    ) (LocationMessage.apply _)
+    ) (DirectionMessage.apply _)
+}
+
+case class NewAvatarMessage(uid: Long, x: Int, y: Int) {
+  val messageType = "newAvatar"
+}
+object NewAvatarMessage {
+  implicit val newAvatarMessageWriter = new Writes[NewAvatarMessage] {
+    def writes(message: NewAvatarMessage) = Json.obj(
+      "type" -> message.messageType,
+      "uid" -> message.uid,
+      "x" -> message.x,
+      "y" -> message.y
+    )
+  }
 }
 
 class GameActor(uid: Long, out: ActorRef) extends Actor {
-  val locationUpdatesTopic = "location_updates"
+  val locationUpdatesTopic = "locationUpdates"
 
   val mediator = DistributedPubSub(context.system).mediator
 
+  private val posX = Random.nextInt(400)
+  private val posY = Random.nextInt(400)
+
+  out ! Json.toJson(new NewAvatarMessage(uid, posX, posY))
+
   mediator ! Subscribe(locationUpdatesTopic, self)
 
-  mediator ! Publish(locationUpdatesTopic, new LocationMessage(uid, Random.nextInt(1000), Random.nextInt(1000)))
+  mediator ! Publish(locationUpdatesTopic, new LocationMessage(uid, posX, posY))
 
-  import LocationMessage.locationMessageWriter
-  import LocationMessage.locationMessageReads
+  val avatar = new Avatar(posX, posY)
+
+  var time = 0
 
   def receive = LoggingReceive {
     case msg: JsValue =>
       (msg \ "data").validate[JsObject].map(data =>
         (msg \ "type").validate[String].map {
-          case "location" =>
-            Json.fromJson[LocationMessage](data).map { request =>
-              mediator ! Publish(locationUpdatesTopic, new LocationMessage(uid, request.x + 100, request.y + 100))
-            }
+          case "direction" =>
+            Json.fromJson[DirectionMessage](data).map(self ! _)
         })
+    case msg: DirectionMessage =>
+      val modD = Math.sqrt(msg.dX * msg.dX + msg.dY * msg.dY)
+      val normD = (msg.dX / modD, msg.dY / modD)
+      println("Norm delta: " + normD)
+      val speed = 1
+      avatar.x = Math.round(normD._1 * speed * time + avatar.x)
+      avatar.y = Math.round(normD._2 * speed * time + avatar.y)
+      time = time + 1
+
+      mediator ! Publish(locationUpdatesTopic, new LocationMessage(uid, avatar.x, avatar.y))
     case msg: LocationMessage =>
       out ! Json.toJson(msg)
       println("New location: " + msg)
+    case msg =>
+      println("Unhandled message: " + msg)
   }
 }
+
+case class Avatar(var x: Long, var y: Long)
 
 case class Event(eventType: String, data: EventData)
 
