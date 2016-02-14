@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.mvc.{Flash, Controller}
 import play.twirl.api.Html
+import play.api.i18n.{MessagesApi, I18nSupport, Messages}
+import javax.inject._
 
-/**
-  * @author jul
-  */
-trait BaseController {
-  def renderView(title: String, view: Html) = {
-    views.html.main(title)(view)
+abstract class BaseController extends Controller with I18nSupport {
+  @Inject var messagesApi: MessagesApi = null
+
+  def renderView(title: String, view: Html)(implicit flash:Flash, messages: Messages) = {
+    views.html.main(title)(view)(flash, messages)
   }
 
 }

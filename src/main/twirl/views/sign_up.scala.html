@@ -1,50 +1,33 @@
-<form id="myForm" method="post" action="/user/sign-up/" class="bs-example form-horizontal">
+@(userForm: Form[User])(implicit flash: Flash, messages: Messages)
+
+@import views.html.helper.FieldConstructor
+
+@implicitField = @{
+    FieldConstructor(helpers.twitterBootstrapFieldConstructorTemplate.f)
+}
+
+<form id="myForm" method="post" action="@routes.UserController.newUser()" class="bs-example form-horizontal">
     <fieldset>
         <legend>Signup Form</legend>
-        <div class="form-group">
-            <label for="userNameInput" class="col-lg-3 control-label">Login</label>
-
-            <div class="col-lg-9">
-                <input type="text" class="form-control" name="login"
-                id="userNameInput" placeholder="Login"
-                value=""/>
+        @if(flash.data.contains("success")) {
+            <div class="success">
+            @flash.get("success")
             </div>
-        </div>
-
-        <div class="form-group">
-            <label for="passwordInput" class="col-lg-3 control-label">Password</label>
-
-            <div class="col-lg-9">
-                <input type="password" class="form-control" name="password"
-                id="passwordInput" placeholder="Password"
-                value=""/>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="firstNameInput" class="col-lg-3 control-label">First Name</label>
-
-            <div class="col-lg-9">
-                <input type="text" class="form-control" name="firstName"
-                id="firstNameInput" placeholder="First Name"
-                value=""/>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="emailAddressInput" class="col-lg-3 control-label">Email Address</label>
-
-            <div class="col-lg-9">
-                <input type="text" class="form-control" name="email"
-                id="emailAddressInput" placeholder="Email Address"
-                value=""/>
-            </div>
-        </div>
+        }
+        @if(userForm.hasGlobalErrors) {
+            <ul class="error">
+            @for( error <- userForm.globalErrors) {
+                <li>@error.message</li>
+            }
+            </ul>
+        }
+        @helper.inputText(userForm("email"))
+        @helper.inputText(userForm("name"))
+        @helper.inputPassword(userForm("password"))
 
         <div class="col-lg-9 col-lg-offset-3">
             <button class="btn btn-default">Cancel</button>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#themodal">Submit</button>
-
+            <button class="btn btn-primary">Submit</button>
         </div>
     </fieldset>
 </form>

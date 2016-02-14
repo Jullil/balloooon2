@@ -1,6 +1,28 @@
+@(form: Form[(String, String)])(implicit flash: Flash, messages: Messages)
+@import views.html.helper.FieldConstructor
+
+@implicitField = @{
+    FieldConstructor(helpers.twitterBootstrapFieldConstructorTemplate.f)
+}
+
 <form id="myForm" method="post" action="/user/sign-in/" class="bs-example form-horizontal">
     <fieldset>
         <legend>Sign In Form</legend>
+        @if(flash.data.contains("success")) {
+            <div class="success">
+            @flash.get("success")
+            </div>
+        }
+        @if(form.hasGlobalErrors) {
+            <ul class="error">
+            @for( error <- form.globalErrors) {
+                <li>@error.message</li>
+            }
+            </ul>
+        }
+        @helper.inputText(form("email"))
+        @helper.inputPassword(form("password"))
+
         <div class="form-group">
             <label for="userNameInput" class="col-lg-3 control-label">User Name</label>
 

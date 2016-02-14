@@ -55,6 +55,10 @@ function init_game(canvasElem) {
 
         var that = this;
         this.canvas.canvas.onmousemove = function (event) {
+            if (that.currentAvatar == null) {
+                return;
+            }
+
             var msg = {
                 type: "direction",
                 data: {
@@ -70,6 +74,7 @@ function init_game(canvasElem) {
         prototype: {
             setAvatar: function (id, location) {
                 this.currentAvatar = this.addAvatar(id, location);
+                this.repaint(this.currentAvatar);
             },
             addAvatar: function (id, location) {
                 var avatar = new Avatar(id, location);

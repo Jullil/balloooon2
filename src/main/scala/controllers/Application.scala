@@ -3,13 +3,13 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-object Application extends Controller with BaseController {
+class Application extends BaseController {
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(renderView("Your new application is ready.", views.html.index()))
   }
 
-  def game = Action {
+  def game = Action { implicit request =>
     Ok(renderView("Lets play!", views.html.game()))
   }
 }
