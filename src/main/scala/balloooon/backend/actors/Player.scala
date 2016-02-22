@@ -1,17 +1,20 @@
 package balloooon.backend.actors
 
-import akka.actor.{ActorRef, Actor, Props}
+import akka.actor.{ActorLogging, ActorRef, Actor, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.{Publish, Subscribe}
+import akka.event.LoggingReceive
 import balloooon.backend.actors.Avatar.{NewAvatarMessage, DirectionMessage, LocationMessage}
 
 import scala.util.Random
 
 object Player {
+  final val name = "player"
+
   def props(client: ActorRef) = Props(new Player(client))
 }
 
-class Player(client: ActorRef) extends Actor {
+class Player(client: ActorRef) extends Actor with ActorLogging {
   import Topics._
 
   val uid = Random.nextInt(100000)
@@ -21,7 +24,11 @@ class Player(client: ActorRef) extends Actor {
 
   val avatar = context.system.actorOf(Avatar.props(uid, self))
 
-  override def receive: Receive = {
+  override def preStart() = log.info("A player replica #{} was created", uid)
+
+  override def postStop() = log.info("A player replica #{} was removed", uid)
+
+  override def receive = LoggingReceive {
     case msg: DirectionMessage => avatar forward msg
     case msg: LocationMessage => client ! msg
     case msg: NewAvatarMessage => client ! msg
