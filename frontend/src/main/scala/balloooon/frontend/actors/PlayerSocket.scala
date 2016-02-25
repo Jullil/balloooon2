@@ -1,10 +1,8 @@
-package actors
+package balloooon.frontend.actors
 
-import akka.actor.{ActorLogging, Actor, ActorRef, Props}
-import akka.cluster.routing.{ClusterRouterPoolSettings, ClusterRouterPool, ClusterRouterGroup, ClusterRouterGroupSettings}
+import akka.actor._
 import akka.event.LoggingReceive
-import akka.routing.{ConsistentHashingPool, ConsistentHashingGroup, FromConfig}
-import balloooon.backend.actors.Avatar.{DirectionMessage, NewAvatarMessage, LocationMessage}
+import balloooon.backend.actors.Avatar.{DirectionMessage, LocationMessage, NewAvatarMessage}
 import balloooon.backend.actors.Player
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -13,15 +11,8 @@ class PlayerSocket(out: ActorRef) extends Actor with ActorLogging {
 
   import PlayerSocket._
 
-//  val player = context.system.actorOf(
-//    ClusterRouterPool(ConsistentHashingPool(0), ClusterRouterPoolSettings(
-//        totalInstances = 100, maxInstancesPerNode = 3,
-//        allowLocalRoutees = false, useRole = None)).props(Player.props(self))
-//  //  FromConfig.props(Player.props(self))
-//  , name = "player3")
-//  val player = context.system.actorOf(FromConfig.props(Player.props(self)), name = "PlayerRouter")
-  val player = context.system.actorOf(Player.props(self))
-
+  //val player = context.system.actorOf(Player.props(self).withDeploy(Deploy(scope = RemoteScope(AddressFromURIString("akka.tcp://application@127.0.0.1:2551")))), Player.name)
+  val player = context.system.actorOf(Player.props(self), Player.name)
 
   player ! DirectionMessage(123, 123)
 

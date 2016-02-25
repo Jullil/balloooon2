@@ -1,4 +1,4 @@
-package controllers
+package balloooon.frontend.controllers
 
 import javax.inject.Inject
 

@@ -10,16 +10,19 @@ import akka.cluster.singleton.{ClusterSingletonManagerSettings, ClusterSingleton
 import scala.collection.script.End
 
 object Game {
+  final val name = "game"
+
   def props = Props[Game]
 
   def startOn(system: ActorSystem) {
-    system.actorOf(ClusterSingletonManager.props(
-      singletonProps = props,
-      terminationMessage = PoisonPill,
-      settings = ClusterSingletonManagerSettings(system)),
-      name = "game")
-    //
-    //    system.actorOf(props, name = "game")
+    Cluster(system) registerOnMemberUp {
+      val game = system.actorOf(ClusterSingletonManager.props(
+        singletonProps = props,
+        terminationMessage = PoisonPill,
+        settings = ClusterSingletonManagerSettings(system)),
+        name = name)
+      system.log info s"Game started at ${game.path}"
+    }
   }
 
   case class TickAction(time: Long)
@@ -46,7 +49,7 @@ class Game extends Actor with ActorLogging {
   override def preStart() = {
     log.info("The game is starting...")
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
-          classOf[MemberEvent], classOf[UnreachableMember])
+      classOf[MemberEvent], classOf[UnreachableMember])
   }
 
   override def postStop() = {
@@ -55,6 +58,6 @@ class Game extends Actor with ActorLogging {
   }
 
   override def receive: Receive = {
-    case msg => println("Game received a message: " + msg)
+    case msg => log.info("Game received a message: " + msg)
   }
 }

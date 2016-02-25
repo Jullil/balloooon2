@@ -13,7 +13,6 @@ lazy val commonSettings = Seq(
     "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
   ),
   libraryDependencies ++= Seq(
-    //"ch.qos.logback" % "logback-classic" % "1.1.3",
     "com.typesafe.akka" %% "akka-cluster" % "2.4.0",
     "com.typesafe.akka" %% "akka-remote" % "2.4.0",
     "com.typesafe.akka" %% "akka-actor" % "2.4.0",
@@ -29,10 +28,10 @@ lazy val backend = (project in file("."))
     name := appName + "-backend"
   ))
 
-lazy val client = (project in file("client")).dependsOn(backend)
+lazy val frontend = (project in file("frontend")).dependsOn(backend)
   .settings(commonSettings : _*)
   .settings(Seq(
-    name := appName + "-web-client",
+    name := appName + "-frontend",
     libraryDependencies ++= Seq(
       jdbc,
       cache,
@@ -44,13 +43,6 @@ lazy val client = (project in file("client")).dependsOn(backend)
     ),
     playMonitoredFiles ++= (sourceDirectories in(Compile, TwirlKeys.compileTemplates)).value,
     routesGenerator := InjectedRoutesGenerator
-    //    discoveredMainClasses in Compile ++= (discoveredMainClasses in backend in Compile).value,
-    //    run := {
-    //      (run in backend in Compile).evaluated
-    //    }//,
-    //mainClass in Compile ++= (mainClass in backend in Compile).value
-    //    fullClasspath in Compile ++= (fullClasspath in backend in Compile).value,
-    //    fullClasspath in Runtime ++= (fullClasspath in backend in Runtime).value
   ))
   .enablePlugins(PlayScala)
   .disablePlugins(PlayLayoutPlugin)
