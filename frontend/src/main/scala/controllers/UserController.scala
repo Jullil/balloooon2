@@ -1,13 +1,9 @@
-package balloooon.frontend.controllers
-
-import javax.inject.Inject
+package controllers
 
 import models.User
-import play.api.data.Forms._
 import play.api.data.Form
-import play.api.mvc.{Action, Controller}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import views.html.helper.form
+import play.api.data.Forms._
+import play.api.mvc.Action
 
 class UserController extends BaseController {
   val userForm = Form(

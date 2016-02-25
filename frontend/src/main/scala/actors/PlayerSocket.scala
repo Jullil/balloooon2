@@ -1,4 +1,4 @@
-package balloooon.frontend.actors
+package actors
 
 import akka.actor._
 import akka.event.LoggingReceive

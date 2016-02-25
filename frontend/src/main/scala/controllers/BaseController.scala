@@ -1,4 +1,4 @@
-package balloooon.frontend.controllers
+package controllers
 
 import play.api.mvc.{Flash, Controller}
 import play.twirl.api.Html

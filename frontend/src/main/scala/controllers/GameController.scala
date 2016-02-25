@@ -1,8 +1,8 @@
-package balloooon.frontend.controllers
+package controllers
 
 import javax.inject.{Inject, _}
 import akka.actor.ActorSystem
-import balloooon.frontend.actors.PlayerSocket
+import actors.PlayerSocket
 import play.api.Play.current
 import play.api.libs.json.JsValue
 import play.api.mvc.{Controller, WebSocket}

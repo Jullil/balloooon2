@@ -41,6 +41,7 @@ lazy val frontend = (project in file("frontend")).dependsOn(backend)
       "org.webjars" % "bootstrap" % "3.0.0",
       "org.webjars" % "sockjs-client" % "1.0.2"
     ),
+    //scalaSource <<= (sourceDirectory in Compile) / "twirl",
     playMonitoredFiles ++= (sourceDirectories in(Compile, TwirlKeys.compileTemplates)).value,
     routesGenerator := InjectedRoutesGenerator
   ))
